@@ -1,0 +1,631 @@
+{
+    "schemes": [
+        "http"
+    ],
+    "swagger": "2.0",
+    "info": {
+        "description": "多链 Web3 数据查询服务，支持 ETH / BNB / Tron / Solana 代币、交易记录、NFT 查询。",
+        "title": "Web3 Multi-Chain Query API",
+        "contact": {},
+        "version": "1.0"
+    },
+    "host": "localhost:8080",
+    "basePath": "/",
+    "paths": {
+        "/api/v1/chain/{chain}/nfts": {
+            "get": {
+                "description": "查询指定链上某个地址拥有的所有 NFT",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "nfts"
+                ],
+                "summary": "查询地址拥有的 NFT",
+                "parameters": [
+                    {
+                        "enum": [
+                            "eth",
+                            "eth_sepolia",
+                            "bnb",
+                            "bnb_testnet",
+                            "tron",
+                            "tron_shasta",
+                            "solana",
+                            "solana_devnet"
+                        ],
+                        "type": "string",
+                        "description": "链名称 (主网: eth, bnb, tron, solana / 测试网: eth_sepolia, bnb_testnet, tron_shasta, solana_devnet)",
+                        "name": "chain",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "钱包地址",
+                        "name": "address",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "分页游标",
+                        "name": "cursor",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/model.NFTPage"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/chain/{chain}/price": {
+            "get": {
+                "description": "通过 Binance 获取指定链本币的实时 USD 价格",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "price"
+                ],
+                "summary": "查询本币 USD 价格",
+                "parameters": [
+                    {
+                        "enum": [
+                            "eth",
+                            "eth_sepolia",
+                            "bnb",
+                            "bnb_testnet",
+                            "tron",
+                            "tron_shasta",
+                            "solana",
+                            "solana_devnet"
+                        ],
+                        "type": "string",
+                        "description": "链名称",
+                        "name": "chain",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/price.PriceInfo"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/chain/{chain}/token/transactions": {
+            "get": {
+                "description": "查询指定链上某个地址针对特定代币的转账记录",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "transactions"
+                ],
+                "summary": "查询代币交易记录",
+                "parameters": [
+                    {
+                        "enum": [
+                            "eth",
+                            "eth_sepolia",
+                            "bnb",
+                            "bnb_testnet",
+                            "tron",
+                            "tron_shasta",
+                            "solana",
+                            "solana_devnet"
+                        ],
+                        "type": "string",
+                        "description": "链名称 (主网: eth, bnb, tron, solana / 测试网: eth_sepolia, bnb_testnet, tron_shasta, solana_devnet)",
+                        "name": "chain",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "钱包地址",
+                        "name": "address",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "代币合约地址",
+                        "name": "contract",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "分页游标",
+                        "name": "cursor",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/model.TransactionPage"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/chain/{chain}/tokens": {
+            "get": {
+                "description": "查询指定链上某个地址拥有的所有代币余额",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "tokens"
+                ],
+                "summary": "查询指定地址拥有的代币",
+                "parameters": [
+                    {
+                        "enum": [
+                            "eth",
+                            "eth_sepolia",
+                            "bnb",
+                            "bnb_testnet",
+                            "tron",
+                            "tron_shasta",
+                            "solana",
+                            "solana_devnet"
+                        ],
+                        "type": "string",
+                        "description": "链名称 (主网: eth, bnb, tron, solana / 测试网: eth_sepolia, bnb_testnet, tron_shasta, solana_devnet)",
+                        "name": "chain",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "钱包地址",
+                        "name": "address",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "分页游标",
+                        "name": "cursor",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/model.TokenPage"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/chain/{chain}/transactions": {
+            "get": {
+                "description": "查询指定链上某个地址的本币（ETH/BNB/TRX/SOL）交易记录",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "transactions"
+                ],
+                "summary": "查询本币交易记录",
+                "parameters": [
+                    {
+                        "enum": [
+                            "eth",
+                            "eth_sepolia",
+                            "bnb",
+                            "bnb_testnet",
+                            "tron",
+                            "tron_shasta",
+                            "solana",
+                            "solana_devnet"
+                        ],
+                        "type": "string",
+                        "description": "链名称 (主网: eth, bnb, tron, solana / 测试网: eth_sepolia, bnb_testnet, tron_shasta, solana_devnet)",
+                        "name": "chain",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "钱包地址",
+                        "name": "address",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "分页游标",
+                        "name": "cursor",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/model.TransactionPage"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/prices": {
+            "get": {
+                "description": "批量获取多个链本币的实时 USD 价格，不传 chains 则返回全部链",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "price"
+                ],
+                "summary": "批量查询本币 USD 价格",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "逗号分隔的链名称，如 eth,bnb,tron,solana（为空则返回全部）",
+                        "name": "chains",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/price.PriceInfo"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "model.NFT": {
+            "type": "object",
+            "properties": {
+                "collection_name": {
+                    "type": "string",
+                    "example": "CryptoPunks"
+                },
+                "contract_address": {
+                    "type": "string",
+                    "example": "0x1234..."
+                },
+                "image": {
+                    "type": "string",
+                    "example": "https://img.cdn.example/1234.png"
+                },
+                "metadata": {
+                    "type": "object",
+                    "additionalProperties": true
+                },
+                "name": {
+                    "type": "string",
+                    "example": "CryptoPunk #1234"
+                },
+                "token_id": {
+                    "type": "string",
+                    "example": "1234"
+                }
+            }
+        },
+        "model.NFTPage": {
+            "type": "object",
+            "properties": {
+                "items": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.NFT"
+                    }
+                },
+                "next_cursor": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.Response": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer",
+                    "example": 0
+                },
+                "data": {},
+                "message": {
+                    "type": "string",
+                    "example": "ok"
+                }
+            }
+        },
+        "model.Token": {
+            "type": "object",
+            "properties": {
+                "balance": {
+                    "type": "string",
+                    "example": "1000000"
+                },
+                "contract_address": {
+                    "type": "string",
+                    "example": "0xdAC17F958D2ee523a2206206994597C13D831ec7"
+                },
+                "decimals": {
+                    "type": "integer",
+                    "example": 6
+                },
+                "logo": {
+                    "type": "string",
+                    "example": "https://logo.cdn.example/usdt.png"
+                },
+                "name": {
+                    "type": "string",
+                    "example": "Tether USD"
+                },
+                "symbol": {
+                    "type": "string",
+                    "example": "USDT"
+                },
+                "usd_value": {
+                    "type": "string",
+                    "example": "1000.00"
+                }
+            }
+        },
+        "model.TokenPage": {
+            "type": "object",
+            "properties": {
+                "items": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.Token"
+                    }
+                },
+                "next_cursor": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.Transaction": {
+            "type": "object",
+            "properties": {
+                "block_number": {
+                    "type": "integer",
+                    "example": 18000000
+                },
+                "from": {
+                    "type": "string",
+                    "example": "0x1234..."
+                },
+                "hash": {
+                    "type": "string",
+                    "example": "0xabc123..."
+                },
+                "status": {
+                    "type": "string",
+                    "example": "success"
+                },
+                "timestamp": {
+                    "type": "string",
+                    "example": "2024-01-01T00:00:00Z"
+                },
+                "to": {
+                    "type": "string",
+                    "example": "0x5678..."
+                },
+                "value": {
+                    "type": "string",
+                    "example": "1000000"
+                }
+            }
+        },
+        "model.TransactionPage": {
+            "type": "object",
+            "properties": {
+                "items": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.Transaction"
+                    }
+                },
+                "next_cursor": {
+                    "type": "string"
+                }
+            }
+        },
+        "price.PriceInfo": {
+            "type": "object",
+            "properties": {
+                "chain": {
+                    "type": "string",
+                    "example": "eth"
+                },
+                "change_24h": {
+                    "type": "string",
+                    "example": "-1.25"
+                },
+                "price": {
+                    "type": "string",
+                    "example": "1670.00"
+                },
+                "symbol": {
+                    "type": "string",
+                    "example": "ETH"
+                }
+            }
+        }
+    }
+}

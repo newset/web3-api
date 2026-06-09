@@ -1,0 +1,34 @@
+server:
+  port: 8080
+  mode: debug
+
+chains:
+  # ---- mainnet ----
+  eth:
+    base_url: "https://deep-index.moralis.io/api/v2"
+    api_key: "${MORALIS_API_KEY}"
+  bnb:
+    base_url: "https://deep-index.moralis.io/api/v2"
+    api_key: "${MORALIS_API_KEY}"
+  tron:
+    base_url: "https://api.trongrid.io"
+    api_key: "${TRONGRID_API_KEY}"
+  solana:
+    base_url: "https://mainnet.helius-rpc.com"
+    api_key: "${HELIUS_API_KEY}"
+
+  # ---- testnet ----
+  eth_sepolia:
+    base_url: "https://deep-index.moralis.io/api/v2"
+    api_key: "${MORALIS_API_KEY}"
+    network: "sepolia"
+  bnb_testnet:
+    base_url: "https://deep-index.moralis.io/api/v2"
+    api_key: "${MORALIS_API_KEY}"
+    network: "bsc testnet"
+  tron_shasta:
+    base_url: "https://api.shasta.trongrid.io"
+    api_key: "${TRONGRID_API_KEY}"
+  solana_devnet:
+    base_url: "https://devnet.helius-rpc.com"
+    api_key: "${HELIUS_API_KEY}"
