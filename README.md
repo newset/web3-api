@@ -52,6 +52,26 @@ go run ./cmd/server
 
 启动后访问：http://localhost:8080/swagger/index.html
 
+### Docker 部署
+
+```bash
+# 1. 复制配置文件
+cp .env.example .env
+cp config.example.yaml config.yaml
+
+# 2. 编辑 .env 填入 API Key
+vim .env
+
+# 3. 启动
+docker compose up -d
+
+# 查看日志
+docker compose logs -f
+
+# 停止
+docker compose down
+```
+
 ## API 接口
 
 ### 代币查询

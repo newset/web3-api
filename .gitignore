@@ -14,3 +14,4 @@ server
 
 # Sensitive config (keep config.example.yaml)
 config.yaml
+.env

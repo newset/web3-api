@@ -1,0 +1,18 @@
+services:
+  web3-api:
+    build: .
+    container_name: web3-api
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      - MORALIS_API_KEY=${MORALIS_API_KEY}
+      - TRONGRID_API_KEY=${TRONGRID_API_KEY}
+      - HELIUS_API_KEY=${HELIUS_API_KEY}
+    volumes:
+      - ./config.yaml:/app/config.yaml:ro
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:8080/api/v1/prices"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
